@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat room: 1234</h1>
+        <div id="message-container"></div>
+        <input type="text" placeholder="Message here">
+        <button type="submit" onClick="sendMessage()">Send message</button>
+        <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+        </ul>
+    </div>
+</body>
+<script src="../node_modules/socket.io/client-dist/socket.io.js"></script>
+<script>
+    // document.getElementById("demo").innerHTML = "Hello world"
+    const socket = io("http://localhost:3000");
+    let roomId = 1234;
+    socket.emit('joinRoom', roomId);
+
+    // function of displayMessage()
+    function displayMessage(message){
+        const messageContainer = document.querySelector('#message-container');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.innerHTML = `<span class="username">${message.username}: </span>`
+        messageContainer.appendChild(messageElement);
+    }
+
+    function sendMessage(){
+        socket.emit('chatMessage', {text: messageText, room: roomId})
+    }
+
+    // newMessage event listener 
+    socket.on('newMessage', (message)=>{
+        console.log(`Received Message: ${message.text}`)
+
+        //Update the UI with the new message
+        dispalyMessage(message);
+
+    });
+
+    socket.on('chatMessage', (message)=>{
+        console.log(`Received message: ${message.text}`)
+
+        //Send the message to other users 
+        socket.broadcast.to(message.room).emit('newMessage', message);
+    });
+
+
+
+</script>
+</html>
