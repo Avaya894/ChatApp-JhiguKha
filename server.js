@@ -8,13 +8,17 @@ const io = require('socket.io')(http);
 io.on('connection', (socket)=>{
     console.log('A user connected');
 
+    // Client message event listener
+    socket.on('toServermessage', (arg)=>{
+        console.log("Message from client: ", arg);
+    });
+
     // Event listener 
     // Code for joinRoom eventlistener 
     socket.on('joinRoom', (room)=>{
         console.log(`${socket.id} just joined room ${room}`);
         socket.join(room);
         io.to(room).emit('roomJoined', `${socket.id} just joined the room`);
-
     });
 
     //  Leave a room
@@ -33,11 +37,22 @@ io.on('connection', (socket)=>{
             message: data.message
         });
     });
-    
+
+    // chatMessage event listener
+    socket.on('chatMessage', (message)=>{
+        console.log(message);
+    })
+
+
     // Disconnect event
     socket.on('disconnect', () => {
         console.log(`${socket.id} disconnected`);
     });
+
+    // Message to the server 
+    socket.emit("message", "Server is messaging you. Hiii!!!!")
+
+    
 
 });
 
