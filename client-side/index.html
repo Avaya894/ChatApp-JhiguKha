@@ -5,16 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    
 </head>
 <body>
     <div class="container">
         <h1>Chat room: 1234</h1>
         <div id="message-container">
-            <input type="text" placeholder="Message here" id="messagebox">
-            <button type="submit" onClick="sendMessage()">Send message</button>
-            <input type="text" placeholder="Room here" id="roombox">
-            <button type="submit" onClick="joinRoom()">Send message</button>
-            <ul class="list-onlineuser">
+            <form id="message-form">
+                <input type="text" placeholder="Message here" id="message-input">
+                <button type="submit" onClick="sendMessage()">Send message</button>
+            </form>
+            
+            <!-- <input type="text" placeholder="Room here" id="roombox">
+            <button type="submit" onClick="joinRoom()">Send message</button> -->
+            <ul id="message-list">
                 <li>1</li>
                 <li>2</li>
                 <li>3</li>
@@ -24,53 +28,6 @@
     </div>
 </body>
 <script src="../node_modules/socket.io/client-dist/socket.io.js"></script>
-<script>
-    // document.getElementById("demo").innerHTML = "Hello world"
-    const socket = io("http://localhost:3000");
-    let roomId = 1234;
-    
-    function joinRoom(){
-        let roomId = document.getElementById("roombox").value;
-        socket.emit('joinRoom', roomId);
-        console.log(`Request to join the room ${roomId}`)
-    }
+<script src="chat.js"></script>
 
-    // function of displayMessage()
-    function displayMessage(message){
-        const messageContainer = document.querySelector('#message-container');
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-        messageElement.innerHTML = `<span class="username">${message.username}: </span>`
-        messageContainer.appendChild(messageElement);
-    }
-
-    function sendMessage(){
-        let messageText = document.getElementById("messagebox").value;
-        console.log(messageText)
-        socket.emit('chatMessage', messageText)
-    }
-
-    // newMessage event listener 
-    socket.on('newMessage', (message)=>{
-        console.log(`Received Message: ${message.text}`)
-
-        //Update the UI with the new message
-        dispalyMessage(message);
-
-    });
-
-    socket.on('chatMessage', (message)=>{
-        console.log(`Received message: ${message.text}`)
-
-        //Send the message to other users 
-        socket.broadcast.to(message.room).emit('newMessage', message);
-    });
-
-    // Listening to hello event from server 
-
-
-    // Messaging server 
-    socket.emit('toServermessage', "Message from client. Hiiiiiiiiii !!!!!");
-
-</script>
 </html>
