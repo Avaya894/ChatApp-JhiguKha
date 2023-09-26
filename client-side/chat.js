@@ -11,6 +11,8 @@ const append = (message)=>{
     messageList.append(messageElement);
 }
 
+
+
 socket.on('user-joined', user => {
     append(`${user} joined`)
 })
