@@ -13,9 +13,17 @@ io.on('connection', (socket)=>{
     //    socket.broadcast.emit('user-joined', name);
        socket.broadcast.emit('user-joined', name);
    })
-    
+
+   socket.on('send', message => {
+       socket.broadcast.emit('receive', {message: message, user: users[socket.id]})
+   });
+
+   socket.on('disconnect', message=>{
+       socket.broadcast.emit('leave', {user: users[socket.id]})
+   })
 
 });
+
 
 
 // Handle Routes

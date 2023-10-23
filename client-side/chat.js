@@ -11,8 +11,26 @@ const append = (message)=>{
     messageList.append(messageElement);
 }
 
+const form = document.querySelector('#message-form');
+const messageInput = document.querySelector('#message-input');
 
+form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    
+    const message = messageInput.value;
+    append(`You : ${message}`);
+    socket.emit('send', message);
+    messageInput.value = ''
+});
 
 socket.on('user-joined', user => {
     append(`${user} joined`)
+})
+
+socket.on('receive', data=>{
+    append(`${data.user} : ${data.message}`)
+})
+
+socket.on('leave', data=>{
+    append(`${data.user} left the chat`)
 })
