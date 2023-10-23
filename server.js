@@ -3,6 +3,10 @@ const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
+const path = require('path');
+const router = express.Router();
+
+app.use(express.static('public'));
 
 users = {};
 
@@ -25,9 +29,11 @@ io.on("connection", (socket) => {
 });
 
 // Handle Routes
-app.get("/", (req, res) => {
-  res.send("Welcome!");
-});
+router.get('/', (req, res)=>{
+    res.sendFile(path.join(__dirname + '/index.html'))
+})
+
+app.use('/', router);
 
 // Start the server
 http.listen(3000, () => {
