@@ -13,9 +13,10 @@ socket.emit("new-user-joined", user);
 
 
 
-const createToastElement = (title, content) => {
+const createToastElement = (title, content, position) => {
     const toastElement = document.createElement('div');
     toastElement.classList.add('toast', 'fade', 'show', 'mb-3');
+    toastElement.classList.add(position);
     toastElement.setAttribute('role', 'alert');
     toastElement.setAttribute('aria-live', 'assertive');
     toastElement.setAttribute('aria-atomic', 'true');
@@ -61,9 +62,9 @@ const createToastElement = (title, content) => {
   }
   
 
-const append = (message) => {
+const append = (data, position) => {
     const messageList = document.getElementById("message-list");
-    const toastElement = createToastElement("Eric Clapton", "Fingers crossed. Its gonna be a blast.");
+    const toastElement = createToastElement(data.user, data.message, position);
     messageList.appendChild(toastElement);
   };
 
@@ -75,19 +76,27 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const message = messageInput.value;
-  append(`You : ${message}`);
+  let right = 'ms-auto'
+  append({user: "You", message: message}, right);
   socket.emit("send", message);
   messageInput.value = "";
 });
 
 socket.on("user-joined", (user) => {
-  append(`${user} joined`);
+  let left = 'me-auto';
+  append({user: user, message: "Joined"}, left);
 });
 
 socket.on("receive", (data) => {
-  append(`${data.user} : ${data.message}`);
+  let left = 'me-auto';
+  let dm = {
+    user: data.user,
+    message: data.message
+  }
+  append(dm, left);
 });
 
 socket.on("leave", (data) => {
-  append(`${data.user} left the chat`);
+  let left = 'me-auto';
+  append({user: data.user, message: "Left the chat"}, left);
 });
